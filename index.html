@@ -1,0 +1,141 @@
+index.html<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Lacag System</title>
+<style>
+body { font-family: Arial; text-align:center; }
+input { padding:8px; margin:5px; }
+button { padding:8px 15px; margin:5px; }
+table { border-collapse: collapse; width:100%; margin-top:20px; }
+th,td { border:1px solid #ccc; padding:8px; }
+</style>
+</head>
+<body>
+
+<h2>Lacag Aruurin System</h2>
+
+<!-- LOGIN TYPE -->
+<button onclick="showStudent()">Student</button>
+<button onclick="showAdmin()">Admin</button>
+
+<!-- STUDENT LOGIN -->
+<div id="studentLogin" style="display:none;">
+    <h3>Student Login (ID)</h3>
+    <input id="studentId" placeholder="Enter ID">
+    <button onclick="studentLogin()">Login</button>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div id="adminLogin" style="display:none;">
+    <h3>Admin Login</h3>
+    <input id="adminPass" placeholder="Enter Password">
+    <button onclick="adminLogin()">Login</button>
+</div>
+
+<!-- STUDENT PAGE -->
+<div id="studentPage" style="display:none;">
+    <h3 id="sname"></h3>
+    <p>ID: <span id="sid"></span></p>
+    <p>Paid: $<span id="spaid"></span></p>
+    <p>Remaining: $<span id="sremain"></span></p>
+</div>
+
+<!-- ADMIN DASHBOARD -->
+<div id="adminPage" style="display:none;">
+    <h3>Admin Dashboard</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>ID</th>
+                <th>Paid</th>
+                <th>Total</th>
+                <th>Remaining</th>
+                <th>Edit Paid</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+</div>
+
+<script>
+const monthly = 2;
+const total = 48;
+
+// password admin (adiga kaliya)
+const adminPassword = "1234";
+
+let students = [
+{ name:"Abdihalim Adam Abdi", id:"HS231429", paid:0 },
+{ name:"Abdikani Ahmed Kassim", id:"HS231483", paid:0 },
+{ name:"Abdikani Ibrahim Mohamud", id:"HS231484", paid:0 }
+];
+
+// UI switch
+function showStudent() {
+    document.getElementById("studentLogin").style.display="block";
+    document.getElementById("adminLogin").style.display="none";
+}
+function showAdmin() {
+    document.getElementById("adminLogin").style.display="block";
+    document.getElementById("studentLogin").style.display="none";
+}
+
+// STUDENT LOGIN
+function studentLogin() {
+    let id = document.getElementById("studentId").value;
+    let s = students.find(x => x.id === id);
+
+    if (!s) return alert("ID khaldan");
+
+    document.getElementById("studentPage").style.display="block";
+
+    document.getElementById("sname").innerText = s.name;
+    document.getElementById("sid").innerText = s.id;
+    document.getElementById("spaid").innerText = s.paid;
+    document.getElementById("sremain").innerText = total - s.paid;
+}
+
+// ADMIN LOGIN
+function adminLogin() {
+    let pass = document.getElementById("adminPass").value;
+    if (pass !== adminPassword) return alert("Password wrong");
+
+    document.getElementById("adminPage").style.display="block";
+    loadTable();
+}
+
+// LOAD TABLE
+function loadTable() {
+    let body = document.getElementById("tableBody");
+    body.innerHTML="";
+
+    students.forEach((s, i) => {
+        body.innerHTML += `
+        <tr>
+            <td>${s.name}</td>
+            <td>${s.id}</td>
+            <td>$${s.paid}</td>
+            <td>$${total}</td>
+            <td>$${total - s.paid}</td>
+            <td>
+                <input type="number" id="paid${i}" placeholder="Add">
+                <button onclick="updatePaid(${i})">Update</button>
+            </td>
+        </tr>`;
+    });
+}
+
+// UPDATE lacag
+function updatePaid(i) {
+    let val = parseFloat(document.getElementById("paid"+i).value);
+    if (isNaN(val)) return;
+
+    students[i].paid += val;
+    loadTable();
+}
+</script>
+
+</body>
+</html>
